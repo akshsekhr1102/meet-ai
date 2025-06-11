@@ -38,7 +38,7 @@ const secondSection = [
     href: "/upgrade",
   },
 ];
-export default function DashboardSidebar() {
+export function DashboardSidebar() {
   const pathname = usePathname();
 
   return (
