@@ -5,18 +5,29 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 import LoadingState from "@/components/loading-state";
 import ErrorState from "@/components/error-state";
+import { DataTable } from "../components/data-table";
+import { columns } from "../components/columns";
+import EmptyState from "@/components/empty-state";
+
+
 
 export function AgentsView() {
   const trpc = useTRPC();
-  const { data } = useSuspenseQuery(trpc.agents.getMany.queryOptions());
+  const { data: agents } = useSuspenseQuery(trpc.agents.getMany.queryOptions());
 
   return (
-  <div>
-    {/* <ResponsiveDialog title="Responsive test" description="This is a responsive dialog" open onOpenChange={() => {}}>
-      <Button>Open dialog</Button>
-    </ResponsiveDialog> */}
-    {JSON.stringify(data, null, 2)}
-  </div>);
+    <div className="flex-1 w-full p-4 md:p-8 flex flex-col gap-y-4">
+      <DataTable columns={columns} data={agents} />
+      {
+        agents.length === 0 ? (
+          <EmptyState
+            title="Create your first agent"
+            description="You don't have any agents yet. Create one to get started"
+          />
+        ) : null
+      }
+    </div>
+  );
 }
 
 export const AgentsViewLoading = () => {
