@@ -25,7 +25,10 @@ export const agentsRouter = createTRPCRouter({
 // TODO: Change `getMany` to `protectedProcedure`
     getMany: protectedProcedure.query(async () => {
         const data = await db
-            .select()
+            .select({
+                ...getTableColumns(agents),
+            meetingCount: sql<number>`5`
+            })
             .from(agents)
         return data
     }
