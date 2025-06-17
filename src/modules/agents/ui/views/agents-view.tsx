@@ -8,18 +8,28 @@ import ErrorState from "@/components/error-state";
 import { DataTable } from "../components/data-table";
 import { columns } from "../components/columns";
 import EmptyState from "@/components/empty-state";
+import { useAgentsFilters } from "../../hooks/use-agents-filters";
+import { DataPagination } from "../components/data-pagination";
 
 
 
 export function AgentsView() {
+    const [filters, setFilters] = useAgentsFilters()
   const trpc = useTRPC();
-  const { data: agents } = useSuspenseQuery(trpc.agents.getMany.queryOptions());
+  const { data: agents } = useSuspenseQuery(trpc.agents.getMany.queryOptions({
+    ...filters
+  }));
 
   return (
     <div className="flex-1 w-full p-4 md:p-8 flex flex-col gap-y-4">
-      <DataTable columns={columns} data={agents} />
+      <DataTable columns={columns} data={agents.items} />
+      <DataPagination 
+      page={filters.page}
+      totalPages={agents.totalPages}
+      onPageChange={(page) => setFilters({page})}
+      />
       {
-        agents.length === 0 ? (
+        agents.items.length === 0 ? (
           <EmptyState
             title="Create your first agent"
             description="You don't have any agents yet. Create one to get started"

@@ -30,7 +30,7 @@ export  function AgentsForm({onSuccess, onCancel, initialValues}: AgentsFormProp
 
             onSuccess: async() => {
                await queryClient.invalidateQueries(
-                    trpc.agents.getMany.queryOptions()
+                    trpc.agents.getMany.queryOptions({})
                 )
                 // TODO: Invalidate 
                 if(initialValues?.id){
