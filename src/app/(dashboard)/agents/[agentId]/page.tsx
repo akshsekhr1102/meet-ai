@@ -1,4 +1,3 @@
-
 import AgentIdViews, { AgentIdViewError, AgentIdViewLoading } from "@/modules/agents/ui/views/agent-id-views";
 import { getQueryClient, trpc } from "@/trpc/server";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
@@ -6,9 +5,9 @@ import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
 interface Props {
-    params: {
+    params: Promise<{
         agentId: string
-    }
+    }>
 }
 
 export default async function page({params}: Props) {
