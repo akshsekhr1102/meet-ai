@@ -26,7 +26,7 @@ export default async function page({searchParams}: Props) {
      headers: await headers(),
    });
  
-   if (!session) {
+   if (!session) {  
      redirect("/sign-in");
    }
     const queryClient = getQueryClient()
