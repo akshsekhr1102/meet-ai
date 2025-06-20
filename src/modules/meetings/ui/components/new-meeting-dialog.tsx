@@ -15,7 +15,7 @@ export default function NewMeetingDialog({open, onOpenChange}: NewMeetingDialogP
         onOpenChange(false)
         router.push(`/meetings/${id}`)
       }}
-       onCancel={()=>onOpenChange} />
+       onCancel={()=>onOpenChange(false)} />
     </ResponsiveDialog>
   );
 }
