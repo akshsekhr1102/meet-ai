@@ -21,12 +21,12 @@ export default function UpcomingState({ meetingId, onCancelMeeting, isCancelling
                 
                 <Button variant={'destructive'} className="w-full lg:w-auto" onClick={onCancelMeeting} disabled={isCancelling}>
                     <BanIcon className="" />
-                    Cancel
+                    Cancel Meeting
                 </Button>
                 <Button variant={'secondary'} asChild className="w-full lg:w-auto">
                 <Link href={`/call/${meetingId}`}>
                     <VideoIcon className="" />
-                    Start
+                    Start Meeting
                 </Link>
                 </Button>
             </div>
