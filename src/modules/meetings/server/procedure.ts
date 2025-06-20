@@ -6,6 +6,7 @@ import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, MIN_PAGE_SIZE } from "@
 import { agents, meetings } from "@/db/schema";
 import { TRPCError } from "@trpc/server";
 import { meetingInsertSchema, meetingUpdateSchema } from "../schema";
+import { MeetingStatus } from "../types";
 
 
 export const meetingsRouter = createTRPCRouter({
@@ -65,10 +66,13 @@ export const meetingsRouter = createTRPCRouter({
         input(z.object({
             page: z.number().default(DEFAULT_PAGE),
             pageSize: z.number().min(MIN_PAGE_SIZE).max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE),
-            search: z.string().nullish().default("")
+            search: z.string().nullish().default(""),
+            agentId: z.string().nullish(),
+            status: z.enum([MeetingStatus.Upcoming, MeetingStatus.Active, MeetingStatus.Processing, MeetingStatus.Completed, MeetingStatus.Cancelled]).nullish()
         }))
         .query(async ({ ctx, input }) => {
-            const { search, page, pageSize } = input;
+
+            const { search, page, pageSize, status, agentId } = input;
             const data = await db
                 .select({
                     ...getTableColumns(meetings),
@@ -80,7 +84,9 @@ export const meetingsRouter = createTRPCRouter({
                 .where(
                     and(
                         eq(meetings.userId, ctx.auth.user.id),
-                        search ? ilike(meetings.name, `%${search}%`) : undefined
+                        search ? ilike(meetings.name, `%${search}%`) : undefined,
+                        agentId ? eq(meetings.agentId, agentId) : undefined,
+                        status ? eq(meetings.status, status) : undefined
                     )
                 )
                 .orderBy(desc(meetings.createdAt), desc(meetings.id))
@@ -95,7 +101,9 @@ export const meetingsRouter = createTRPCRouter({
                 .where(
                     and(
                         eq(meetings.userId, ctx.auth.user.id),
-                        search ? ilike(meetings.name, `%${search}%`) : undefined
+                        search ? ilike(meetings.name, `%${search}%`) : undefined,
+                        agentId ? eq(meetings.agentId, agentId) : undefined,
+                        status ? eq(meetings.status, status) : undefined
                     )
                 )
             const totalPage = Math.ceil(total.count / pageSize)
