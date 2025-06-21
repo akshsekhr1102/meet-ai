@@ -13,30 +13,34 @@ import { generateAvatarUri } from "@/lib/avatar";
 
 export const meetingsRouter = createTRPCRouter({
 
-    generateToken: protectedProcedure
-    .mutation(async ({ ctx }) => {
-        await streamVideo.upsertUsers([
-            {
-                id: ctx.auth.user.id,
-                name: ctx.auth.user.name,
-                role: "admin",
-                image: ctx.auth.user.image ?? generateAvatarUri({ seed: ctx.auth.user.id, variant: "initials" }),
-            }
-        ])
-
-       const expirationTime = Math.floor(Date.now() / 1000) + 60 * 60;  
-       const issuedAt = Math.floor(Date.now() / 1000);
-       const token = streamVideo.generateUserToken(
+    
+generateToken: protectedProcedure
+.mutation(async ({ ctx }) => {
+    // Upsert user in Stream
+    await streamVideo.upsertUsers([
         {
-            user_id: ctx.auth.user.id,
-            validity_in_seconds: issuedAt,
-            exp: expirationTime,
-           
+            id: ctx.auth.user.id,
+            name: ctx.auth.user.name,
+            role: "admin",
+            image: ctx.auth.user.image ?? generateAvatarUri({ 
+                seed: ctx.auth.user.id, 
+                variant: "initials" 
+            }),
         }
-       );
-       return token;
-    }),
+    ]);
 
+    const currentTime = Math.floor(Date.now() / 1000);
+    const expirationTime = currentTime + (60 * 60); // 1 hour from now
+    
+    const token = streamVideo.generateUserToken({
+        user_id: ctx.auth.user.id,
+        validity_in_seconds: 60 * 60, // ✅ 1 hour duration
+        iat: currentTime,              // ✅ Issued at (optional but good practice)
+        exp: expirationTime,           // ✅ Expiration time
+    });
+
+    return token;
+}),
     remove: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
@@ -77,8 +81,8 @@ export const meetingsRouter = createTRPCRouter({
                 updatedAt: new Date(),
             })
             .returning()
-            // TODO: create steam call, update stream users
-            const call = streamVideo.video.call("default", createdMeeting.id)
+
+           const call = streamVideo.video.call("default", createdMeeting.id)
 
             await call.create({
                 data: {
