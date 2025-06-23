@@ -12,9 +12,5 @@ export default async function Home() {
   if (!session) {
     redirect("/sign-in");
   }
-  return (
-    <div>
-      <HomeView />
-    </div>
-  );
+  return <HomeView />;
 }

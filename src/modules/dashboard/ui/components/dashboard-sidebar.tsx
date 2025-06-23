@@ -38,7 +38,7 @@ const secondSection = [
     href: "/upgrade",
   },
 ];
-export default function DashboardSidebar() {
+export function DashboardSidebar() {
   const pathname = usePathname();
 
   return (
@@ -85,7 +85,7 @@ export default function DashboardSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
         <div className="px-4 py-2">
-          <Separator className="opacity-80 text-[#5d6b68]" />
+          <Separator className="opacity-80 text-[#575757]" />
         </div>
         <SidebarGroup>
           <SidebarGroupContent>
